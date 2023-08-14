@@ -1,6 +1,5 @@
 /*
- * Copyright (C) 2015 The CyanogenMod Project
- *               2017-2020 The LineageOS Project
+ * Copyright (C) 2018 The LineageOS Project
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -20,44 +19,31 @@ package org.lineageos.settings;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.IBinder;
-import android.util.Log;
 import android.view.Display.HdrCapabilities;
 import android.view.SurfaceControl;
 
 import org.lineageos.settings.dirac.DiracUtils;
-import org.lineageos.settings.doze.DozeUtils;
-import org.lineageos.settings.refreshrate.RefreshUtils;
+import org.lineageos.settings.doze.PocketService;
 import org.lineageos.settings.thermal.ThermalUtils;
 
 public class BootCompletedReceiver extends BroadcastReceiver {
-
-    private static final boolean DEBUG = false;
-    private static final String TAG = "XiaomiParts";
 
     @Override
     public void onReceive(final Context context, Intent intent) {
         if (!intent.getAction().equals(Intent.ACTION_BOOT_COMPLETED)) {
             return;
         }
-        if (DEBUG)
-            Log.d(TAG, "Received boot completed intent");
 
         // Dirac
-        try {
-            DiracUtils.getInstance(context);
-        } catch (Exception e) {
-            Log.d(TAG, "Dirac is not present in system");
-        }
-
-        // Doze
-        DozeUtils.checkDozeService(context);
-
-        // Refresh Rate
-        RefreshUtils.initialize(context);
+        DiracUtils.onBootCompleted(context);
 
         // Thermal Profiles
         ThermalUtils.startService(context);
+
+        // Pocket
+        PocketService.startService(context);
 
         // Override HDR types
         final IBinder displayToken = SurfaceControl.getInternalDisplayToken();

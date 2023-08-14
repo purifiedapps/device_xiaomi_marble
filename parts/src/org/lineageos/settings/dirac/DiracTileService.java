@@ -5,31 +5,29 @@ import android.service.quicksettings.TileService;
 
 public class DiracTileService extends TileService {
 
-    private DiracUtils mDiracUtils;
-
     @Override
     public void onStartListening() {
-        mDiracUtils = DiracUtils.getInstance(getApplicationContext());
 
         Tile tile = getQsTile();
-        if (mDiracUtils.isDiracEnabled()) {
+        if (DiracUtils.isDiracEnabled()) {
             tile.setState(Tile.STATE_ACTIVE);
         } else {
             tile.setState(Tile.STATE_INACTIVE);
         }
 
         tile.updateTile();
+
         super.onStartListening();
     }
 
     @Override
     public void onClick() {
         Tile tile = getQsTile();
-        if (mDiracUtils.isDiracEnabled()) {
-            mDiracUtils.setEnabled(false);
+        if (DiracUtils.isDiracEnabled()) {
+            DiracUtils.setMusic(false);
             tile.setState(Tile.STATE_INACTIVE);
         } else {
-            mDiracUtils.setEnabled(true);
+            DiracUtils.setMusic(true);
             tile.setState(Tile.STATE_ACTIVE);
         }
         tile.updateTile();
